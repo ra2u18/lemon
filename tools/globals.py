@@ -1,6 +1,11 @@
 V_MAJOR = 1
 V_MINOR = 0
 
+ENGINE_NAME = "lemon"
+PROJECT_NAME = "lemoneditor"
+
+TOOLS_DIR = "tools"
+
 import sys, platform
 
 PLATFORM = sys.platform

@@ -1,5 +1,7 @@
 import subprocess
 
+import globals
+
 if globals.IsWindows():
     subprocess.call(["cmd.exe", "/c", "premake\\premake5", "vs2019"])
 

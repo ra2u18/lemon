@@ -15,6 +15,7 @@ odir = "bin-obj/%{cfg.buildcfg}/%{prj.name}"
 -- Define all external dependencies
 externals = {}
 externals["sdl2"] = "external/sdl2"
+externals["spdlog"] = "external/spdlog"
 
 project "lemon"
     location "lemon"
@@ -36,7 +37,8 @@ project "lemon"
     sysincludedirs 
     { 
         "%{prj.name}/include/lemon",
-        "%{externals.sdl2}/include"
+        "%{externals.sdl2}/include",
+        "%{externals.spdlog}/include"
     }
 
     flags { "FatalWarnings" } 
@@ -66,12 +68,12 @@ project "lemon"
     filter "configurations:Debug"
         defines "LEMON_CONFIG_DEBUG"
         runtime "Debug"
-        symbols "On" -- pdb symbols / for release we don't want them
+        symbols "on" -- pdb symbols / for release we don't want them
 
     filter "configurations:Release"
         defines "LEMON_CONFIG_RELEASE"
         runtime "Release"
-        symbols "Off"
+        symbols "off"
         optimize "on"
 
 -- The sandbox editor, external to any engine functionality
@@ -131,10 +133,10 @@ project "lemoneditor"
     filter "configurations:Debug"
         defines "LEMON_CONFIG_DEBUG"
         runtime "Debug"
-        symbols "On" -- pdb symbols / for release we don't want them
+        symbols "on" -- pdb symbols / for release we don't want them
 
     filter "configurations:Release"
         defines "LEMON_CONFIG_RELEASE"
         runtime "Release"
-        symbols "Off"
+        symbols "off"
         optimize "on"

@@ -1,17 +1,12 @@
 #include "lemon/engine.h"
-
 #include <iostream>
 
 int main()
 {
-    std::cout << "Hello world" << std::endl;
-    
-    lemon::Initialize();
-    lemon::Shutdown();
+    lemon::Engine& engine = lemon::Engine::Instance();
+    engine.Run();
 
-#ifdef LEMON_PLATFORM_WINDOWS
-    system("pause");
-#endif
-
+    std::cout << "Press ENTER to continue...";
+    std::cin.ignore();
     return 0;
 } 

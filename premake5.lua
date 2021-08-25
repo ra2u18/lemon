@@ -15,6 +15,12 @@ odir = "bin-obj/%{cfg.buildcfg}/%{prj.name}"
 -- Define all external dependencies
 externals = {}
 externals["sdl2"] = "external/sdl2"
+externals["maclibs"] = "external/maclibs"
+externals["spdlog"] = "external/spdlog"
+externals["glad"] = "external/glad"
+
+-- Process Glad before anything else
+include "external/glad" -- find any premake5.lua that reside in this path
 
 project "lemon"
     location "lemon"
@@ -36,12 +42,20 @@ project "lemon"
     sysincludedirs 
     { 
         "%{prj.name}/include/lemon",
-        "%{externals.sdl2}/include"
+        "%{externals.sdl2}/include",
+        "%{externals.spdlog}/include",
+        "%{externals.glad}/include"
     }
 
     flags { "FatalWarnings" } 
 
     -- [PLATFORM DEFINES]
+    -- All platform defines
+    defines
+    {
+        "GLFW_INCLUDE_NONE" -- Ensures glad doesn't include glfw
+    }
+
     -- Windows
     filter {"system:windows", "configurations:*"}
         systemversion "latest" -- target latest windows upgrade when "cli gensln"
@@ -66,12 +80,12 @@ project "lemon"
     filter "configurations:Debug"
         defines "LEMON_CONFIG_DEBUG"
         runtime "Debug"
-        symbols "On" -- pdb symbols / for release we don't want them
+        symbols "on" -- pdb symbols / for release we don't want them
 
     filter "configurations:Release"
         defines "LEMON_CONFIG_RELEASE"
         runtime "Release"
-        symbols "Off"
+        symbols "off"
         optimize "on"
 
 -- The sandbox editor, external to any engine functionality
@@ -109,12 +123,19 @@ project "lemoneditor"
 
         links
         {
-            "SDL2"
+            "SDL2",
+            "glad" -- will be available because we process glad first
         }
     
     -- Linux
     filter {"system:linux", "configurations:*"}
         defines{ "LEMON_PLATFORM_LINUX" }
+
+        links
+        {
+            "SDL2",
+            "glad"
+        }
     
     -- Darwin - MacOs
     filter {"system:macosx", "configurations:*"}
@@ -123,18 +144,27 @@ project "lemoneditor"
         {
             ["MACOSX_DEPLOYMENT_TARGET"] = "10.15", -- not the latest sys, to include more people
             ["UseModernBuildSystem"] = "NO"
-        }    
-    
+        }
+
+        abspath = path.getabsolute("%{externals.maclibs}")
+        linkoptions {"-F " .. abspath}
+
+        links 
+        {
+            "SDL2.framework",
+            "glad"
+        }
+
         defines{ "LEMON_PLATFORM_MAC" }
     
     -- [CONFIGURATION DEFINES]: usually used to turn on optimization
     filter "configurations:Debug"
         defines "LEMON_CONFIG_DEBUG"
         runtime "Debug"
-        symbols "On" -- pdb symbols / for release we don't want them
+        symbols "on" -- pdb symbols / for release we don't want them
 
     filter "configurations:Release"
         defines "LEMON_CONFIG_RELEASE"
         runtime "Release"
-        symbols "Off"
+        symbols "off"
         optimize "on"

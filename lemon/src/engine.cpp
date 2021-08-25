@@ -20,8 +20,13 @@ namespace lemon
     void Engine::Run()
     {
         if (Initialize()) {
-            while (mIsRunning)
+            while (mIsRunning) {
                 mWindow.PumpEvents();
+                
+                mWindow.BeginRender();
+                 // render scene
+                mWindow.EndRender();
+            }
             Shutdown();
         }
     }
